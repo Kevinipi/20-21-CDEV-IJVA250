@@ -95,7 +95,7 @@ public class HomeController {
         response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
         PrintWriter writer = response.getWriter();
         List<Article> articles = articleServiceImpl.findAllArticle();
-        writer.println("Nom" +";"+ "Prenom");
+        writer.println("Libellé" +";"+ "Prix");
         for(int i = 0; i < articles.size(); i++) {
             Article article = articles.get(i);
             String ligne = article.getLibelle() +";"+ article.getPrix();
