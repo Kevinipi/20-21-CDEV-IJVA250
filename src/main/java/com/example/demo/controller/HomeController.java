@@ -53,6 +53,7 @@ public class HomeController {
 
         return modelAndView;
     }
+//Export client CSV
 
     @GetMapping("/clients/csv")
     public void clientsCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -60,6 +61,38 @@ public class HomeController {
         response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
         PrintWriter writer = response.getWriter();
         List<Client> clients = clientServiceImpl.findAllClients();
+        writer.println("Nom" +";"+ "Prenom");
+        for(int i = 0; i < clients.size(); i++) {
+            Client client = clients.get(i);
+            String ligne = client.getNom() +";"+ client.getPrenom();
+            writer.println(ligne);
+        }
+    }
+
+//Export Client XLSX
+
+    @GetMapping("/clients/xlsx")
+    public void clientsXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.xlsx\"");
+        PrintWriter writer = response.getWriter();
+        List<Client> clients = clientServiceImpl.findAllClients();
+        for(int i = 0; i < clients.size(); i++) {
+            Client client = clients.get(i);
+            String ligne = client.getNom() + client.getPrenom();
+            writer.println(ligne);
+        }
+    }
+
+//Export Articles CSV
+
+    @GetMapping("/articles/csv")
+    public void articlesCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
+        PrintWriter writer = response.getWriter();
+        List<Client> clients = clientServiceImpl.findAllClients();
+        writer.println("Nom" +";"+ "Prenom");
         for(int i = 0; i < clients.size(); i++) {
             Client client = clients.get(i);
             String ligne = client.getNom() +";"+ client.getPrenom();
