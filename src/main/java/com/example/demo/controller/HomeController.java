@@ -58,7 +58,7 @@ public class HomeController {
     @GetMapping("/clients/csv")
     public void clientsCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.csv\"");
         PrintWriter writer = response.getWriter();
         List<Client> clients = clientServiceImpl.findAllClients();
         writer.println("Nom" +";"+ "Prenom");
