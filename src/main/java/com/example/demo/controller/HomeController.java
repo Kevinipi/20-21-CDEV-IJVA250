@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Client;
 import com.example.demo.entity.Facture;
+import com.example.demo.service.impl.ArticleServiceImpl;
 import com.example.demo.service.impl.ClientServiceImpl;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.FactureService;
@@ -31,6 +32,8 @@ public class HomeController {
     private ClientServiceImpl clientServiceImpl;
     @Autowired
     private FactureService factureService;
+    @Autowired
+    private ArticleServiceImpl articleServiceImpl;
 
     public HomeController(ArticleService articleService, ClientServiceImpl clientService, FactureService factureService) {
         this.articleService = articleService;
@@ -91,11 +94,11 @@ public class HomeController {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
         PrintWriter writer = response.getWriter();
-        List<Client> clients = clientServiceImpl.findAllClients();
+        List<Article> articles = articleServiceImpl.findAllArticle();
         writer.println("Nom" +";"+ "Prenom");
-        for(int i = 0; i < clients.size(); i++) {
-            Client client = clients.get(i);
-            String ligne = client.getNom() +";"+ client.getPrenom();
+        for(int i = 0; i < articles.size(); i++) {
+            Article article = articles.get(i);
+            String ligne = article.getLibelle() +";"+ article.getPrix();
             writer.println(ligne);
         }
     }

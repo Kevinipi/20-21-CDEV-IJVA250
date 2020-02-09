@@ -26,4 +26,7 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.findAll();
     }
 
+    public List<Article> findAllArticle() {
+        return articleRepository.findAll();
+    }
 }
