@@ -10,6 +10,8 @@ import com.example.demo.service.FactureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HttpServletBean;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,9 +58,41 @@ public class HomeController {
 
         return modelAndView;
     }
-//Export client CSV
 
-    @GetMapping("/clients/csv")
+//Export Articles CSV
+
+    @RequestMapping(method = RequestMethod.GET, value = "/articles/csv")
+    public void articlesCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
+        PrintWriter writer = response.getWriter();
+        List<Article> articles = articleServiceImpl.findAllArticle();
+        writer.println("Libellé" +";"+ "Prix");
+        for(int i = 0; i < articles.size(); i++) {
+            Article article = articles.get(i);
+            String ligne = article.getLibelle() +";"+ article.getPrix();
+            writer.println(ligne);
+        }
+    }
+
+    //Export Articles XLSX
+
+    @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
+    public void facturesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.xlsx\"");
+        PrintWriter writer = response.getWriter();
+        List<Article> articles = articleServiceImpl.findAllArticle();
+        writer.println("Libellé" +","+ "Prix");
+        for(int i = 0; i < articles.size(); i++) {
+            Article article = articles.get(i);
+            String ligne = article.getLibelle() +";"+ article.getPrix();
+            writer.println(ligne);
+        }
+    }
+    //Export client CSV
+
+    @RequestMapping(method = RequestMethod.GET, value = "/clients/csv")
     public void clientsCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.csv\"");
@@ -74,31 +108,16 @@ public class HomeController {
 
 //Export Client XLSX
 
-    @GetMapping("/clients/xlsx")
+    @RequestMapping(method = RequestMethod.GET, value = "/clients/xlsx")
     public void clientsXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/xlsx");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.xlsx\"");
         PrintWriter writer = response.getWriter();
         List<Client> clients = clientServiceImpl.findAllClients();
+        writer.println("Nom" +","+ "Prenom");
         for(int i = 0; i < clients.size(); i++) {
             Client client = clients.get(i);
             String ligne = client.getNom() + client.getPrenom();
-            writer.println(ligne);
-        }
-    }
-
-//Export Articles CSV
-
-    @GetMapping("/articles/csv")
-    public void articlesCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
-        PrintWriter writer = response.getWriter();
-        List<Article> articles = articleServiceImpl.findAllArticle();
-        writer.println("Libellé" +";"+ "Prix");
-        for(int i = 0; i < articles.size(); i++) {
-            Article article = articles.get(i);
-            String ligne = article.getLibelle() +";"+ article.getPrix();
             writer.println(ligne);
         }
     }
