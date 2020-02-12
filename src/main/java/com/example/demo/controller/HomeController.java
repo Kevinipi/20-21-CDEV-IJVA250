@@ -107,7 +107,6 @@ public class HomeController {
 
      */
 
-
 //Export Articles XLSX (2ème version)
 
     @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
@@ -127,19 +126,33 @@ public class HomeController {
         cellLibelle.setCellValue("Libellé");
         cellPrix.setCellValue("Prix");
 
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+
         int rowNum = 1;
 
         for(Article article : articles) {
             Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
 
             row.createCell(0).setCellValue(article.getLibelle());
+
             row.createCell(1).setCellValue(article.getPrix());
+
+            cellLibelle.setCellStyle(headerCellStyle); //Appliquer style sur titre libellé
+            cellPrix.setCellStyle(headerCellStyle); // Appliquer style sut titre prix
         }
         //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
         workbook.write(response.getOutputStream());
         //fileOutputStream.close();
         workbook.close();
     }
+
+
     //Export client CSV
 
 
@@ -179,6 +192,15 @@ public void clientsXLSX (HttpServletRequest request, HttpServletResponse respons
         cellNom.setCellValue("Nom");
         cellAge.setCellValue("Age");
 
+
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerFont.setColor(IndexedColors.RED.getIndex());
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+
         int rowNum = 1;
 
     for(Client client : clients) {
@@ -189,10 +211,58 @@ public void clientsXLSX (HttpServletRequest request, HttpServletResponse respons
         row.createCell(0).setCellValue(client.getPrenom());
         row.createCell(1).setCellValue(client.getNom());
         row.createCell(2).setCellValue(age);
+
+        cellPrenom.setCellStyle(headerCellStyle); //Appliquer style sur titre Prenom
+        cellNom.setCellStyle(headerCellStyle); //Appliquer style sur titre Nom
+        cellAge.setCellStyle(headerCellStyle); //Appliquer style sur age
     }
     //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
     workbook.write(response.getOutputStream());
     //fileOutputStream.close();
     workbook.close();
 }
+
+
+//Export Factures XLSX
+
+    @RequestMapping(method = RequestMethod.GET, value = "/factures/xlsx")
+    public void facturesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //ServletOutputStream os = response.getOutputStream();
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-factures.xlsx\"");
+        //PrintWriter writer = response.getWriter();
+        List<Facture> factures = factureService.findAllFactures();
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Factures");
+        Row headerRow = sheet.createRow(0);
+
+        Cell cellLigneFacture = headerRow.createCell(0);
+        cellLigneFacture.setCellValue("Facture");
+
+        Cell cellId = headerRow.createCell(1);
+        cellId.setCellValue("Id");
+
+        Cell cellClient = headerRow.createCell(2);
+        cellClient.setCellValue("Client");
+
+        Cell cellTotal = headerRow.createCell(3);
+        cellTotal.setCellValue("Total");
+
+
+        int rowNum = 1;
+
+        for(Facture facture : factures) {
+            Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
+
+            //row.createCell(0).setCellValue(facture.getLigneFactures());
+            row.createCell(1).setCellValue(facture.getId());
+            row.createCell(2).setCellValue(facture.getClient().getNom() + facture.getClient().getPrenom());
+            row.createCell(3).setCellValue(facture.getTotal());
+        }
+        //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
+        workbook.write(response.getOutputStream());
+        //fileOutputStream.close();
+        workbook.close();
+    }
 }
