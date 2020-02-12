@@ -87,6 +87,7 @@ public class HomeController {
         }
     }
 
+    /*
     //Export Articles XLSX
 
     @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
@@ -101,6 +102,43 @@ public class HomeController {
             String ligne = article.getLibelle() +";"+ article.getPrix();
             writer.println(ligne);
         }
+    }
+
+
+     */
+
+
+//Export Articles XLSX (2ème version)
+
+    @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
+    public void articlesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //ServletOutputStream os = response.getOutputStream();
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.xlsx\"");
+        //PrintWriter writer = response.getWriter();
+        List<Article> articles = articleServiceImpl.findAllArticle();
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Articles");
+        Row headerRow = sheet.createRow(0);
+
+        Cell cellLibelle = headerRow.createCell(0);
+        Cell cellPrix = headerRow.createCell(1);
+        cellLibelle.setCellValue("Libellé");
+        cellPrix.setCellValue("Prix");
+
+        int rowNum = 1;
+
+        for(Article article : articles) {
+            Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
+
+            row.createCell(0).setCellValue(article.getLibelle());
+            row.createCell(1).setCellValue(article.getPrix());
+        }
+        //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
+        workbook.write(response.getOutputStream());
+        //fileOutputStream.close();
+        workbook.close();
     }
     //Export client CSV
 
@@ -157,20 +195,4 @@ public void clientsXLSX (HttpServletRequest request, HttpServletResponse respons
     //fileOutputStream.close();
     workbook.close();
 }
-/*
-    @RequestMapping(method = RequestMethod.GET, value = "/clients/xlsx")
-    public void clientsXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/xlsx");
-        response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.xlsx\"");
-        PrintWriter writer = response.getWriter();
-        List<Client> clients = clientServiceImpl.findAllClients();
-        writer.println("Nom" +","+ "Prenom");
-        for(int i = 0; i < clients.size(); i++) {
-            Client client = clients.get(i);
-            String ligne = client.getNom() + client.getPrenom();
-            writer.println(ligne);
-        }
-    }
-
- */
 }
