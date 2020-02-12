@@ -47,6 +47,7 @@ public class HomeController {
     private FactureService factureService;
     @Autowired
     private ArticleServiceImpl articleServiceImpl;
+
     private OutputStream fileOutputStream;
 
     public HomeController(ArticleService articleService, ClientServiceImpl clientService, FactureService factureService) {
@@ -74,43 +75,23 @@ public class HomeController {
 //Export Articles CSV
 
     @RequestMapping(method = RequestMethod.GET, value = "/articles/csv")
-    public void articlesCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void articlesCSV(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.csv\"");
         PrintWriter writer = response.getWriter();
         List<Article> articles = articleServiceImpl.findAllArticle();
-        writer.println("Libellé" +";"+ "Prix");
-        for(int i = 0; i < articles.size(); i++) {
+        writer.println("Libellé" + ";" + "Prix");
+        for (int i = 0; i < articles.size(); i++) {
             Article article = articles.get(i);
-            String ligne = article.getLibelle() +";"+ article.getPrix();
+            String ligne = article.getLibelle() + ";" + article.getPrix();
             writer.println(ligne);
         }
     }
 
-    /*
-    //Export Articles XLSX
+//Export Articles XLSX
 
     @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
-    public void facturesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/xlsx");
-        response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.xlsx\"");
-        PrintWriter writer = response.getWriter();
-        List<Article> articles = articleServiceImpl.findAllArticle();
-        writer.println("Libellé" +","+ "Prix");
-        for(int i = 0; i < articles.size(); i++) {
-            Article article = articles.get(i);
-            String ligne = article.getLibelle() +";"+ article.getPrix();
-            writer.println(ligne);
-        }
-    }
-
-
-     */
-
-//Export Articles XLSX (2ème version)
-
-    @RequestMapping(method = RequestMethod.GET, value = "/articles/xlsx")
-    public void articlesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void articlesXLSX(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //ServletOutputStream os = response.getOutputStream();
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-articles.xlsx\"");
@@ -136,8 +117,8 @@ public class HomeController {
 
         int rowNum = 1;
 
-        for(Article article : articles) {
-            Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
+        for (Article article : articles) {
+            Row row = sheet.createRow(rowNum++); //A chaque ligne trouvé je recommence une ligne en dessous
 
             row.createCell(0).setCellValue(article.getLibelle());
 
@@ -155,34 +136,33 @@ public class HomeController {
 
     //Export client CSV
 
-
     @RequestMapping(method = RequestMethod.GET, value = "/clients/csv")
-    public void clientsCSV (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void clientsCSV(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.csv\"");
         PrintWriter writer = response.getWriter();
         List<Client> clients = clientServiceImpl.findAllClients();
-        writer.println("Nom" +";"+ "Prenom" + ";" + "Age");
-        for(int i = 0; i < clients.size(); i++) {
+        writer.println("Nom" + ";" + "Prenom" + ";" + "Age");
+        for (int i = 0; i < clients.size(); i++) {
             Client client = clients.get(i);
             int age = client.getDateNaissance().until(LocalDate.now()).getYears();
-            String ligne = client.getNom() +";"+ client.getPrenom() + ";" + age;
+            String ligne = client.getNom() + ";" + client.getPrenom() + ";" + age;
             writer.println(ligne);
         }
     }
 
-//Export Client XLSX
+    //Export Client XLSX
 
-@RequestMapping(method = RequestMethod.GET, value = "/clients/xlsx")
-public void clientsXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
-    //ServletOutputStream os = response.getOutputStream();
-    response.setContentType("application/vnd.ms-excel");
-    response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.xlsx\"");
-    //PrintWriter writer = response.getWriter();
-    List<Client> clients = clientServiceImpl.findAllClients();
+    @RequestMapping(method = RequestMethod.GET, value = "/clients/xlsx")
+    public void clientsXLSX(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //ServletOutputStream os = response.getOutputStream();
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"export-clients.xlsx\"");
+        //PrintWriter writer = response.getWriter();
+        List<Client> clients = clientServiceImpl.findAllClients();
 
-    Workbook workbook = new XSSFWorkbook();
-    Sheet sheet = workbook.createSheet("Clients");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Clients");
         Row headerRow = sheet.createRow(0);
 
         Cell cellPrenom = headerRow.createCell(0);
@@ -203,30 +183,30 @@ public void clientsXLSX (HttpServletRequest request, HttpServletResponse respons
 
         int rowNum = 1;
 
-    for(Client client : clients) {
-        Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
+        for (Client client : clients) {
+            Row row = sheet.createRow(rowNum++); //A chaque ligne trouvé je recommence une ligne en dessous
 
-        int age = client.getDateNaissance().until(LocalDate.now()).getYears();
+            int age = client.getDateNaissance().until(LocalDate.now()).getYears();
 
-        row.createCell(0).setCellValue(client.getPrenom());
-        row.createCell(1).setCellValue(client.getNom());
-        row.createCell(2).setCellValue(age);
+            row.createCell(0).setCellValue(client.getPrenom());
+            row.createCell(1).setCellValue(client.getNom());
+            row.createCell(2).setCellValue(age);
 
-        cellPrenom.setCellStyle(headerCellStyle); //Appliquer style sur titre Prenom
-        cellNom.setCellStyle(headerCellStyle); //Appliquer style sur titre Nom
-        cellAge.setCellStyle(headerCellStyle); //Appliquer style sur age
+            cellPrenom.setCellStyle(headerCellStyle); //Appliquer style sur titre Prenom
+            cellNom.setCellStyle(headerCellStyle); //Appliquer style sur titre Nom
+            cellAge.setCellStyle(headerCellStyle); //Appliquer style sur age
+        }
+        //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
+        workbook.write(response.getOutputStream());
+        //fileOutputStream.close();
+        workbook.close();
     }
-    //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
-    workbook.write(response.getOutputStream());
-    //fileOutputStream.close();
-    workbook.close();
-}
 
 
 //Export Factures XLSX
 
     @RequestMapping(method = RequestMethod.GET, value = "/factures/xlsx")
-    public void facturesXLSX (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void facturesXLSX(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //ServletOutputStream os = response.getOutputStream();
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-Disposition", "attachment; filename=\"export-factures.xlsx\"");
@@ -252,12 +232,12 @@ public void clientsXLSX (HttpServletRequest request, HttpServletResponse respons
 
         int rowNum = 1;
 
-        for(Facture facture : factures) {
-            Row row = sheet.createRow(rowNum ++); //A chaque ligne trouvé je recommence une ligne en dessous
+        for (Facture facture : factures) {
+            Row row = sheet.createRow(rowNum++); //A chaque ligne trouvé je recommence une ligne en dessous
 
             //row.createCell(0).setCellValue(facture.getLigneFactures());
             row.createCell(1).setCellValue(facture.getId());
-            row.createCell(2).setCellValue(facture.getClient().getNom() + facture.getClient().getPrenom());
+            row.createCell(2).setCellValue(facture.getClient().getNom() +" "+ facture.getClient().getPrenom());
             row.createCell(3).setCellValue(facture.getTotal());
         }
         //FileOutputStream fileOutputStream = new FileOutputStream("export-clients.xlsx");
